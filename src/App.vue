@@ -1,11 +1,13 @@
 <template>
   <div id="app">
     <cart></cart>
+    <products-list></products-list>
   </div>
 </template>
 
 <script>
   import Cart from './components/Cart'
+  import ProductsList from './components/ProductsList'
   import Counter from './components/common/Counter'
   export default {
     name: 'app',
@@ -22,7 +24,8 @@
     },
     components: {
       Cart,
-      Counter
+      Counter,
+      ProductsList
     }
   }
 </script>
