@@ -259,12 +259,19 @@
   .product__detail{
     display: flex;
     margin: -1px 0;
+    justify-content: space-between;
   }
-  .product__detail > *{
-    margin: 0 5px;
+  .product__detail .image{
+    flex-basis: 80px;
   }
   .product__detail .name{
+    padding: 0 5px;
     cursor: pointer;
+    flex-basis: 180px;
+  }
+  .product__detail .type{
+    padding: 0 5px;
+    flex-basis: 170px;
   }
   .product__detail .name:hover{
     color: #e4393c;
