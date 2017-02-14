@@ -31,7 +31,6 @@
 <style>
   .product-block{
     position: relative;
-    /*margin-left: -1px;*/
     width: 25%;
     padding: 5px;
     padding-right: 6px;
@@ -44,7 +43,6 @@
     transition: border-color .3s ease;
   }
   .product-block:hover{
-    /*z-index: 2;*/
     border: 1px solid #e4393c;
   }
   .product-block:first-of-type{

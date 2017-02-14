@@ -11,8 +11,8 @@
               <thead>
                 <tr>
                   <th width="80px">
-                    <input type="checkbox">
-                    <span>全选</span>
+                    <input type="checkbox" id="checkAll">
+                    <label for="checkAll">全选</label>
                   </th>
                   <th width="450px">
                     <span>商品</span>
@@ -32,7 +32,7 @@
                 </tr>
               </thead>
               <tbody>
-                <template v-for="shop in cartShops">
+                <template v-for="(shop, shopIndex) in cartShops">
                   <tr class="shop">
                     <td>
                       <input type="checkbox">
@@ -74,26 +74,29 @@
                 </template>
               </tbody>
             </table>
-            <div class="cart-total text-right">
-              <div>
-                <span>
-                  <input type="checkbox">
-                  <label>全选</label>
-                </span>
+            <div class="cart-total clearfix">
+              <div class="cart-total__actions pull-left">
+                <input type="checkbox">
+                <label>全选</label>
                 <span>删除选中的商品</span>
                 <span>移到我的关注</span>
                 <span>清除下柜商品</span>
               </div>
-              <div>
+              <div class="cart-total__total pull-right">
                 <p>
-                  <span>已选择<em>0</em>件商品<i class="fa fa-caret-up">&nbsp;</i></span>
-                  <span>总价：<em>￥19.90</em><i class="fa fa-light">&nbsp;</i></span>
+                  <span class="cart-total__overview-toggle">
+                    已选择<span class="cart-total__total-num">0</span>件商品
+                    <i class="fa fa-angle-up">&nbsp;</i></span>
+                  <span>
+                    总价：<span class="cart-total__total-price">￥123.12</span>
+                    <i class="fa fa-light">&nbsp;</i>
+                  </span>
                 </p>
                 <p>
-                  <span>已节省：<em>-￥0.00</em></span>
+                  <span>已节省：<span class="cart-total__saved-price">-￥0.00</span></span>
                 </p>
-                <button>去结算</button>
               </div>
+              <button class="cart-total__checkout">去结算</button>
             </div>
           </div>
         </div>
@@ -184,6 +187,26 @@
   .text-center{
     text-align: center !important;
   }
+  .pull-left{
+    float: left !important;
+  }
+  .pull-right{
+    float: right !important;
+  }
+  .clearfix:before,
+  .clearfix:after{
+    display: table;
+    content: "";
+  }
+  .clearfix:after{
+    clear: both;
+  }
+  .cart-link{
+    cursor: pointer;
+  }
+  .cart-link:hover{
+    color: #e4393c;
+  }
   .cart .tab__list{
     font-size: 16px;
     font-weight: 700;
@@ -195,20 +218,32 @@
     text-align: left;
     border-collapse: collapse;
   }
+  .cart-products td,
+  .cart-products th{
+    border: 1px solid #f0f0f0;
+  }
   .shop td{
-    border-bottom: 2px solid #f1f1f1;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    border-bottom: 2px solid #aaa;
+  }
+  .shop__name{
+    padding: 3px 5px;
+    background-color: #e4393c;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 2px;
   }
   .product td{
-    border-width: 1px 0;
-    border-style: solid;
-    border-color: #ebebeb;
+    border-left-color: transparent;
+    border-right-color: transparent;
     vertical-align: top;
   }
   .product td:first-of-type{
-    border-left-width: 1px;
+    border-left-color: #f1f1f1;
   }
   .product td:last-of-type{
-    border-right-width: 1px;
+    border-right-color: #f1f1f1;
   }
   .cart-products th,
   .cart-products td{
@@ -223,9 +258,16 @@
   }
   .product__detail{
     display: flex;
+    margin: -1px 0;
   }
   .product__detail > *{
     margin: 0 5px;
+  }
+  .product__detail .name{
+    cursor: pointer;
+  }
+  .product__detail .name:hover{
+    color: #e4393c;
   }
   .product__quantity .quantity{
     margin: 0 auto;
@@ -250,5 +292,62 @@
   .product__actions span:hover{
     cursor: pointer;
     color: #e4393c;
+  }
+  .cart-total{
+    position: relative;
+    margin-top: 20px;
+    position: relative;
+    height: 50px;
+    border: 1px solid #f0f0f0;
+    color: #999;
+  }
+  .cart-total__actions{
+    height: 50px;
+    line-height: 50px;
+    padding-left: 8px;
+  }
+  .cart-total__actions span:hover{
+    color: #e4393c;
+    cursor: pointer;
+  }
+  .cart-total__total{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 110px;
+  }
+  .cart-total__total p{
+    margin: 0;
+    text-align: right;
+  }
+  .cart-total__total p > span{
+    margin: 0 5px;
+  }
+  .cart-total__total-num,
+  .cart-total__total-price{
+    padding: 0 5px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #e4393c;
+  }
+  .cart-total__saved-price{
+    padding: 0 8px;
+    color: #666;
+  }
+  .cart-total__overview-toggle{
+    cursor: pointer;
+  }
+  .cart-total__checkout{
+    width: 100px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    border: 1px solid #e4393c;
+    border-width: 0 1px;
+    background-color: #e4393c;
+    color: #fff;
+    font-weight: 700;
+    font-size: 16px;
   }
 </style>
