@@ -23,6 +23,9 @@
 </script>
 
 <style>
+*{
+  box-sizing: border-box;
+}
 #app {
   font: 12px/150% tahoma,arial,Microsoft YaHei,Hiragino Sans GB,"\u5b8b\u4f53",sans-serif;
   -webkit-font-smoothing: antialiased;

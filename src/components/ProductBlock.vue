@@ -30,8 +30,11 @@
 
 <style>
   .product-block{
+    position: relative;
+    /*margin-left: -1px;*/
     width: 25%;
     padding: 5px;
+    padding-right: 6px;
     display: inline-block;
     overflow: hidden;
     border: 1px dashed #ebebeb;
@@ -39,10 +42,13 @@
     box-sizing: border-box;
     color: #333;
     transition: border-color .3s ease;
-    border-collapse: collapse;
   }
   .product-block:hover{
+    /*z-index: 2;*/
     border: 1px solid #e4393c;
+  }
+  .product-block:first-of-type{
+    margin-left: 0;
   }
   .product-block + .product-block:hover{
 

@@ -69,6 +69,10 @@ const actions = {
       console.log(error)
       commit(types.CHECKOUT_FAILURE, {savedProducts})
     })
+  },
+  changeQuantity: ({commit}, product) => {
+    console.log(product)
+    commit(types.CHANGE_QUANTITY, product)
   }
 }
 
