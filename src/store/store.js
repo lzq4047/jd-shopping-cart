@@ -4,8 +4,8 @@ import Vuex from 'vuex'
 import cart from './module/cart.js'
 import products from './module/products.js'
 
-import getters from './getters.js'
-import actions from './actions.js'
+import * as getters from './getters.js'
+import * as actions from './actions.js'
 
 Vue.use(Vuex)
 

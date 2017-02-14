@@ -15,6 +15,17 @@ const getters = {
 }
 
 const mutations = {
+  [types.ADD_TO_CART] (state, {pid}) {
+    let cartRecord = state.added.find(p => p.id === pid)
+    if (cartRecord) {
+      cartRecord.quantity++
+    } else {
+      state.added.push({
+        id: pid,
+        quantity: 1
+      })
+    }
+  },
   [types.REMOVE_FROM_CART] (state, {pid}) {
     let cartRecordIndex = state.added.findIndex(p => p.id === pid)
     if (!cartRecordIndex) {
@@ -28,7 +39,7 @@ const mutations = {
       cartRecord.quantity = quantity
     }
   },
-  [types.CHECKOUT_REQUEST] (state, products) {
+  [types.CHECKOUT_REQUEST] (state, {products}) {
     products.forEach((product, index) => {
       let cartRecordIndex = state.added.findIndex(p => p.id === product.id)
       state.added.splice(cartRecordIndex, 1)

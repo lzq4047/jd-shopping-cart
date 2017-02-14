@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <cart></cart>
-    <products-list></products-list>
   </div>
 </template>
 
@@ -9,23 +8,16 @@
   import Cart from './components/Cart'
   import ProductsList from './components/ProductsList'
   import Counter from './components/common/Counter'
+  import Swiper from './components/common/Swiper'
+  import SwiperItem from './components/common/SwiperItem'
   export default {
     name: 'app',
-    data: function () {
-      return {
-        obj1: {
-          arr1: [{
-            obj3: {
-              currentValue: 1
-            }
-          }]
-        }
-      }
-    },
     components: {
       Cart,
       Counter,
-      ProductsList
+      ProductsList,
+      Swiper,
+      SwiperItem
     }
   }
 </script>
