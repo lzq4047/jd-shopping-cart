@@ -222,12 +222,22 @@
     mounted: function () {
       this.$nextTick(() => {
         window.onscroll = (event) => {
+          let timer = null
           let offsetTop = this.$refs.cartTotal.offsetTop
           let elementHeight = this.$refs.cartTotal.clientHeight
-          if (offsetTop - window.scrollY + elementHeight > window.innerHeight) {
-            this.isFixed = true
+          if (timer) {
+            return
           } else {
-            this.isFixed = false
+            timer = setTimeout(() => {
+              let ifFixed = (offsetTop - window.scrollY + elementHeight) > window.innerHeight
+              console.log(ifFixed)
+              if (ifFixed) {
+                this.isFixed = true
+              } else {
+                this.isFixed = false
+              }
+              clearTimeout(timer)
+            }, 1000)
           }
         }
       })
