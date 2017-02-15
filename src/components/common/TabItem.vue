@@ -26,14 +26,31 @@
       },
       show: function () {
         return this.rootTab.activeIndex === this.index
+      },
+      titleProperties: function () {
+        return {
+          title: this.label || '标签页',
+          index: this.index,
+          iconClass: this.iconClass
+        }
       }
     },
+    methods: {
+      updateLabel: function () {
+        let labelRecord = this.rootTab.labels.find(label => label.index === this.titleProperties.index)
+        if (labelRecord) {
+          labelRecord.title = this.titleProperties.title
+          labelRecord.iconClass = this.titleProperties.iconClass
+        } else {
+          this.rootTab.labels.push(this.titleProperties)
+        }
+      }
+    },
+    beforeUpdate: function () {
+      this.updateLabel()
+    },
     mounted: function () {
-      this.rootTab.labels.push({
-        title: this.label || '标签页',
-        index: this.index,
-        iconClass: this.iconClass
-      })
+      this.updateLabel()
       this.$nextTick(() => {
         if (this.active) {
           this.rootTab.activeIndex = this.index

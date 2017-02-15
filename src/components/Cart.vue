@@ -11,8 +11,11 @@
               <thead>
                 <tr>
                   <th width="80px">
-                    <input type="checkbox" id="checkAll">
-                    <label for="checkAll">全选</label>
+                    <input type="checkbox" 
+                      id="checkAllTop" 
+                      :checked="computeChecked(cartProducts)" 
+                      @change="handleAllChange($event.target.checked)">
+                    <label for="checkAllTop">全选</label>
                   </th>
                   <th width="450px">
                     <span>商品</span>
@@ -35,7 +38,9 @@
                 <template v-for="(shop, shopIndex) in cartShops">
                   <tr class="shop">
                     <td>
-                      <input type="checkbox">
+                      <input type="checkbox" 
+                        :checked="computeChecked(shop.products)"
+                        @change="handleShopChange(shop.products, $event.target.checked)">
                     </td>
                     <td colspan="5">
                       <a href="#" class="shop__name">{{shop.name}}</a>
@@ -43,7 +48,9 @@
                   </tr>
                   <tr v-for="product in shop.products" class="product">
                     <td>
-                      <input type="checkbox">
+                      <input type="checkbox" 
+                        :checked="computeChecked(product)" 
+                        @change="handleProductChange(product.id, $event.target.checked)">
                     </td>
                     <td class="product__detail">
                       <img class="image" :src="product.image" height="80" width="80" :alt="product.name">
@@ -58,7 +65,7 @@
                         class="quantity"
                         :value="product.quantity" 
                         :min="0" 
-                        @input="change(product.id, $event)"></counter>
+                        @input="handleQuantityChange(product.id, $event)"></counter>
                       <span class="stock" :class="product.quantity <= product.stock ? '': 'no-stock'">{{product.quantity <= product.stock ? '有货' : '无货'}}</span>
                     </td>
                     <td class="product__subtotal text-right">
@@ -76,8 +83,11 @@
             </table>
             <div class="cart-total clearfix">
               <div class="cart-total__actions pull-left">
-                <input type="checkbox">
-                <label>全选</label>
+                <input type="checkbox" 
+                  id="checkAllBottom" 
+                  :checked="computeChecked(cartProducts)" 
+                  @change="handleAllChange($event.target.checked)">
+                <label for="checkAllBottom">全选</label>
                 <span>删除选中的商品</span>
                 <span>移到我的关注</span>
                 <span>清除下柜商品</span>
@@ -85,10 +95,10 @@
               <div class="cart-total__total pull-right">
                 <p>
                   <span class="cart-total__overview-toggle">
-                    已选择<span class="cart-total__total-num">0</span>件商品
+                    已选择<span class="cart-total__total-num">{{cartSelected.length}}</span>件商品
                     <i class="fa fa-angle-up">&nbsp;</i></span>
                   <span>
-                    总价：<span class="cart-total__total-price">￥123.12</span>
+                    总价：<span class="cart-total__total-price">￥{{totalPrice}}</span>
                     <i class="fa fa-light">&nbsp;</i>
                   </span>
                 </p>
@@ -132,15 +142,8 @@
   import ProductsList from './ProductsList'
   import {mapGetters, mapActions} from 'vuex'
   export default {
-    data: function () {
-      return {
-        quantity: null
-      }
-    },
     computed: {
-      ...mapGetters({
-        cartProducts: 'cartProducts'
-      }),
+      ...mapGetters(['cartProducts', 'cartSelected', 'totalPrice']),
       cartShops: function () {
         let shops = []
         this.cartProducts.forEach(product => {
@@ -155,20 +158,54 @@
             })
           }
         })
-        console.log(shops)
         return shops
       }
     },
     methods: {
-      ...mapActions({
-        changeQuantity: 'changeQuantity'
-      }),
-      change: function (pid, quantity) {
-        console.log(quantity)
+      ...mapActions(['changeQuantity', 'addToSelected', 'removeFromSelect']),
+      handleQuantityChange: function (pid, quantity) {
         this.changeQuantity({
           pid,
           quantity: quantity
         })
+      },
+      handleProductChange: function (pid, checked) {
+        if (checked) {
+          this.addToSelected([pid])
+        } else {
+          this.removeFromSelect([pid])
+        }
+      },
+      handleShopChange: function (products, checked) {
+        let pids = products.reduce((accumulator, product) => {
+          return [...accumulator, product.id]
+        }, [])
+        if (checked) {
+          this.addToSelected(pids)
+        } else {
+          this.removeFromSelect(pids)
+        }
+      },
+      handleAllChange: function (checked) {
+        let pids = this.cartProducts.reduce((accumulator, product) => {
+          return [...accumulator, product.id]
+        }, [])
+        if (checked) {
+          this.addToSelected(pids)
+        } else {
+          this.removeFromSelect(pids)
+        }
+      },
+      computeChecked: function (products) {
+        let type = Object.prototype.toString.apply(products)
+        if (type === '[object Array]') {
+          let isAllSelected = products.every(product => {
+            return ~this.cartSelected.indexOf(product.id)
+          })
+          return isAllSelected
+        } else if (type === '[object Object]') {
+          return ~this.cartSelected.indexOf(products.id)
+        }
       }
     },
     components: {

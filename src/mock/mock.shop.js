@@ -21,7 +21,6 @@ Mock.mock(baseURL + '/api/getAllProducts', 'get', () => {
             'name': '耐克官方旗舰店'
           }]
         })
-        console.log(shop.data)
         return shop.data
       },
       'name': () => Random.csentence(),

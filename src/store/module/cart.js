@@ -7,6 +7,7 @@ const CHECKOUT_STATUS_DOING = 1
 
 const state = {
   added: [],
+  selected: [],
   checkoutStatus: null
 }
 
@@ -32,6 +33,18 @@ const mutations = {
       return
     }
     state.added.splice(cartRecordIndex, 1)
+  },
+  [types.ADD_TO_SELECTED] (state, {pids}) {
+    // 数组去重
+    state.selected = [...new Set([...state.selected, ...pids])]
+  },
+  [types.REMOVE_FROM_SELECTED] (state, {pids}) {
+    for (let pid of pids) {
+      let cartRecordIndex = state.selected.indexOf(pid)
+      if (~cartRecordIndex) {
+        state.selected.splice(cartRecordIndex, 1)
+      }
+    }
   },
   [types.CHANGE_QUANTITY] (state, {pid, quantity}) {
     let cartRecord = state.added.find(p => p.id === pid)
@@ -63,7 +76,6 @@ const actions = {
     let savedProducts = products
     commit(types.CHECKOUT_REQUEST)
     shop.checkout(products, response => {
-      console.log(response)
       commit(types.CHECKOUT_SUCCESS)
     }, error => {
       console.log(error)
@@ -71,8 +83,17 @@ const actions = {
     })
   },
   changeQuantity: ({commit}, product) => {
-    console.log(product)
     commit(types.CHANGE_QUANTITY, product)
+  },
+  addToSelected: ({commit}, pids) => {
+    if (pids instanceof Array && pids.length) {
+      commit(types.ADD_TO_SELECTED, {pids})
+    }
+  },
+  removeFromSelect: ({commit}, pids) => {
+    if (pids instanceof Array && pids.length) {
+      commit(types.REMOVE_FROM_SELECTED, {pids})
+    }
   }
 }
 

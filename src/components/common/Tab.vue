@@ -22,6 +22,11 @@
     props: {
       horizental: Boolean
     },
+    watch: {
+      labels: function (newVal) {
+        console.log(newVal)
+      }
+    },
     methods: {
       getTitle: () => {
         return null
