@@ -3,11 +3,11 @@
     <tab horizental>
       <tab-item :label="'全部商品' + cartProducts.length" active>
         <div>
-          <div v-if="!cartProducts.length">
-            购物车为空
-          </div>
-          <div v-else>
-            <table class="cart-products">
+          <div>
+            <div v-if="!cartProducts.length">
+              购物车为空
+            </div>
+            <table v-else class="cart-products">
               <thead>
                 <tr>
                   <th width="80px">
@@ -81,7 +81,7 @@
                 </template>
               </tbody>
             </table>
-            <div class="cart-total clearfix">
+            <div class="cart-total clearfix" :class="{'fixed--bottom': isFixed}" ref="cartTotal">
               <div class="cart-total__actions pull-left">
                 <input type="checkbox" 
                   id="checkAllBottom" 
@@ -142,6 +142,11 @@
   import ProductsList from './ProductsList'
   import {mapGetters, mapActions} from 'vuex'
   export default {
+    data: function () {
+      return {
+        isFixed: false
+      }
+    },
     computed: {
       ...mapGetters(['cartProducts', 'cartSelected', 'totalPrice']),
       cartShops: function () {
@@ -213,6 +218,19 @@
       TabItem,
       Counter,
       ProductsList
+    },
+    mounted: function () {
+      this.$nextTick(() => {
+        window.onscroll = (event) => {
+          let offsetTop = this.$refs.cartTotal.offsetTop
+          let elementHeight = this.$refs.cartTotal.clientHeight
+          if (offsetTop - window.scrollY + elementHeight > window.innerHeight) {
+            this.isFixed = true
+          } else {
+            this.isFixed = false
+          }
+        }
+      })
     }
   }
 </script>
@@ -243,6 +261,9 @@
   }
   .cart-link:hover{
     color: #e4393c;
+  }
+  .cart{
+    margin-bottom: 60px;
   }
   .cart .tab__list{
     font-size: 16px;
@@ -344,6 +365,8 @@
     height: 50px;
     border: 1px solid #f0f0f0;
     color: #999;
+    background-color: #fff;
+    z-index: 3;
   }
   .cart-total__actions{
     height: 50px;
@@ -393,5 +416,10 @@
     color: #fff;
     font-weight: 700;
     font-size: 16px;
+  }
+  .fixed--bottom{
+    position: fixed;
+    bottom: 0;
+    width: 990px;
   }
 </style>

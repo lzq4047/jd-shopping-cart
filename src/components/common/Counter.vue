@@ -1,7 +1,7 @@
 <template>
   <div class="counter">
     <span class="counter__minus" :class="{'is-disabled': value <= min}" @click="decrement">&minus;</span>
-    <input class="counter__value" type="number" :value="value" @input="updateValue($event.target.value)">
+    <input class="counter__value" type="number" :value="value" @input="updateValue($event.target.value)" ref="value">
     <span class="counter__plus" :class="{'is-disabled': value >= max}" @click="increment">&plus;</span>
   </div>
 </template>
