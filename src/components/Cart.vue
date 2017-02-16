@@ -7,7 +7,7 @@
             <div v-if="!cartProducts.length">
               购物车为空
             </div>
-            <table v-else class="cart-products">
+            <table v-else class="cart-products" ref="productsList">
               <thead>
                 <tr>
                   <th width="80px">
@@ -85,7 +85,7 @@
               <div class="cart-total__actions pull-left">
                 <input type="checkbox" 
                   id="checkAllBottom" 
-                  :checked="computeChecked(cartProducts)" 
+                  :checked="computeChecked(cartProducts) && cartProducts.lenght" 
                   @change="handleAllChange($event.target.checked)">
                 <label for="checkAllBottom">全选</label>
                 <span @click="removeFromCart(cartSelected)">删除选中的商品</span>
@@ -223,14 +223,18 @@
       this.$nextTick(() => {
         let timer = null
         window.onscroll = (event) => {
-          let offsetTop = this.$refs.cartTotal.offsetTop
-          let elementHeight = this.$refs.cartTotal.clientHeight
+          if (!this.$refs.productsList || !this.$refs.cartTotal) {
+            return
+          }
+          let cartTotalHeight = this.$refs.cartTotal.clientHeight
+          let productsListHeight = this.$refs.productsList.clientHeight
+          let productsListOffsetTop = this.$refs.productsList.offsetTop
           // scroll event split-flow事件分流
           if (timer) {
             return
           } else {
             timer = setTimeout(() => {
-              let shouldFix = (offsetTop - window.scrollY + elementHeight) > window.innerHeight
+              let shouldFix = (productsListHeight + productsListOffsetTop - window.scrollY + cartTotalHeight) > window.innerHeight
               if (shouldFix) {
                 this.isFixed = true
               } else {
@@ -263,6 +267,7 @@
     color: #e4393c;
   }
   .cart-products{
+    width: 100%;
     text-align: left;
     border-collapse: collapse;
   }
@@ -406,6 +411,11 @@
     color: #fff;
     font-weight: 700;
     font-size: 16px;
+    cursor: pointer;
+    outline: 0;
+  }
+  .cart-total__checkout:active{
+    box-shadow: inset 0 0 2px red;
   }
   .fixed--bottom{
     position: fixed;
