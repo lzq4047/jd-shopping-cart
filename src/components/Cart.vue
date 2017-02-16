@@ -66,14 +66,14 @@
                         :value="product.quantity" 
                         :min="0" 
                         @input="handleQuantityChange(product.id, $event)"></counter>
-                      <span class="stock" :class="product.quantity <= product.stock ? '': 'no-stock'">{{product.quantity <= product.stock ? '有货' : '无货'}}</span>
+                      <span class="stock" :class="product.stock > 0 ? '': 'no-stock'">{{product.stock > 0 ? '有货' : '无货'}}</span>
                     </td>
                     <td class="product__subtotal text-right">
                       <span class="price">￥{{(product.price * product.quantity).toFixed(2)}}</span>
                       <span class="weight">{{product.weight}}Kg</span>
                     </td>
                     <td class="product__actions">
-                      <span>删除</span>
+                      <span @click="removeFromCart([product.id])">删除</span>
                       <span v-if="product.quantity > product.stock">到货通知</span>
                       <span>移到我的关注</span>
                     </td>
@@ -88,7 +88,7 @@
                   :checked="computeChecked(cartProducts)" 
                   @change="handleAllChange($event.target.checked)">
                 <label for="checkAllBottom">全选</label>
-                <span>删除选中的商品</span>
+                <span @click="removeFromCart(cartSelected)">删除选中的商品</span>
                 <span>移到我的关注</span>
                 <span>清除下柜商品</span>
               </div>
@@ -167,38 +167,38 @@
       }
     },
     methods: {
-      ...mapActions(['changeQuantity', 'addToSelected', 'removeFromSelect']),
-      handleQuantityChange: function (pid, quantity) {
+      ...mapActions(['changeQuantity', 'addToSelected', 'removeFromSelect', 'removeFromCart']),
+      handleQuantityChange: function (id, quantity) {
         this.changeQuantity({
-          pid,
-          quantity: quantity
+          id,
+          quantity
         })
       },
-      handleProductChange: function (pid, checked) {
+      handleProductChange: function (id, checked) {
         if (checked) {
-          this.addToSelected([pid])
+          this.addToSelected([id])
         } else {
-          this.removeFromSelect([pid])
+          this.removeFromSelect([id])
         }
       },
       handleShopChange: function (products, checked) {
-        let pids = products.reduce((accumulator, product) => {
+        let ids = products.reduce((accumulator, product) => {
           return [...accumulator, product.id]
         }, [])
         if (checked) {
-          this.addToSelected(pids)
+          this.addToSelected(ids)
         } else {
-          this.removeFromSelect(pids)
+          this.removeFromSelect(ids)
         }
       },
       handleAllChange: function (checked) {
-        let pids = this.cartProducts.reduce((accumulator, product) => {
+        let ids = this.cartProducts.reduce((accumulator, product) => {
           return [...accumulator, product.id]
         }, [])
         if (checked) {
-          this.addToSelected(pids)
+          this.addToSelected(ids)
         } else {
-          this.removeFromSelect(pids)
+          this.removeFromSelect(ids)
         }
       },
       computeChecked: function (products) {
@@ -221,23 +221,23 @@
     },
     mounted: function () {
       this.$nextTick(() => {
+        let timer = null
         window.onscroll = (event) => {
-          let timer = null
           let offsetTop = this.$refs.cartTotal.offsetTop
           let elementHeight = this.$refs.cartTotal.clientHeight
+          // scroll event split-flow事件分流
           if (timer) {
             return
           } else {
             timer = setTimeout(() => {
-              let ifFixed = (offsetTop - window.scrollY + elementHeight) > window.innerHeight
-              console.log(ifFixed)
-              if (ifFixed) {
+              let shouldFix = (offsetTop - window.scrollY + elementHeight) > window.innerHeight
+              if (shouldFix) {
                 this.isFixed = true
               } else {
                 this.isFixed = false
               }
-              clearTimeout(timer)
-            }, 1000)
+              timer = null
+            }, 300)
           }
         }
       })
@@ -246,26 +246,6 @@
 </script>
 
 <style>
-  .text-right{
-    text-align: right !important;
-  }
-  .text-center{
-    text-align: center !important;
-  }
-  .pull-left{
-    float: left !important;
-  }
-  .pull-right{
-    float: right !important;
-  }
-  .clearfix:before,
-  .clearfix:after{
-    display: table;
-    content: "";
-  }
-  .clearfix:after{
-    clear: both;
-  }
   .cart-link{
     cursor: pointer;
   }
@@ -402,7 +382,7 @@
   }
   .cart-total__total-num,
   .cart-total__total-price{
-    padding: 0 5px;
+    padding-left: 5px;
     font-size: 16px;
     font-weight: 700;
     color: #e4393c;

@@ -10,10 +10,16 @@ const getters = {
 }
 
 const mutations = {
-  [types.ADD_TO_CART] (state, {pid}) {
-    let productRecord = state.allProducts.find(p => p.id === pid)
+  [types.ADD_TO_CART] (state, {id}) {
+    let productRecord = state.allProducts.find(p => p.id === id)
     if (productRecord) {
       productRecord.stock--
+    }
+  },
+  [types.CHANGE_STOCK] (state, {id, stock}) {
+    let productRecord = state.allProducts.find(p => p.id === id)
+    if (productRecord) {
+      productRecord.stock = stock
     }
   },
   [types.GET_ALL_PRODUCTS] (state, {products}) {
@@ -24,12 +30,14 @@ const mutations = {
     return productRecord
   },
   [types.RECEIVE_PRODUCT] (state, {products}) {
+    if (!(products instanceof Array) || !products.length) {
+      return
+    }
     products.forEach((product, index) => {
       let productRecord = state.allProducts.find(p => p.id === product.id)
-      if (!productRecord) {
-        return
+      if (productRecord) {
+        productRecord.stock = productRecord.stock + product.quantity
       }
-      productRecord.stock = productRecord.stock + product.quantity
     })
   }
 }

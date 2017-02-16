@@ -21,16 +21,11 @@
       }),
       productsGroups: function () {
         let groups = []
-        let tmp = []
-        this.products.map((product, index) => {
-          if (index % 5 === 0) {
-            groups.push(tmp)
-            tmp = []
-          } else {
-            tmp.push(product)
-          }
-        })
-        return groups.slice(1)
+        let index = 0
+        while (index < this.products.length) {
+          groups.push(this.products.slice(index, index = index + 4))
+        }
+        return groups
       }
     },
     methods: {

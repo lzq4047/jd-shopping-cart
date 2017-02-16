@@ -6,10 +6,6 @@ export const cartProducts = state => {
   })
 }
 
-export const cartSelected = state => {
-  return state.cart.selected
-}
-
 export const totalPrice = state => {
   let totalPrice = state.cart.selected.reduce((accumulator, id) => {
     let price = state.products.allProducts.find(p => p.id === id).price

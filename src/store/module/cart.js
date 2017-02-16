@@ -12,42 +12,53 @@ const state = {
 }
 
 const getters = {
-
+  cartSelected: state => {
+    return state.selected.filter(id => {
+      return state.added.findIndex(p => p.id === id) !== -1
+    })
+  }
 }
 
 const mutations = {
-  [types.ADD_TO_CART] (state, {pid}) {
-    let cartRecord = state.added.find(p => p.id === pid)
+  [types.ADD_TO_CART] (state, {id}) {
+    let cartRecord = state.added.find(p => p.id === id)
     if (cartRecord) {
       cartRecord.quantity++
     } else {
       state.added.push({
-        id: pid,
+        id: id,
         quantity: 1
       })
     }
   },
-  [types.REMOVE_FROM_CART] (state, {pid}) {
-    let cartRecordIndex = state.added.findIndex(p => p.id === pid)
-    if (!cartRecordIndex) {
+  [types.REMOVE_FROM_CART] (state, {ids}) {
+    if (!(ids instanceof Array) || !ids.length) {
       return
     }
-    state.added.splice(cartRecordIndex, 1)
+    for (let id of ids) {
+      let cartRecordIndex = state.added.findIndex(p => p.id === id)
+      if (~cartRecordIndex) {
+        state.added.splice(cartRecordIndex, 1)
+      }
+    }
   },
-  [types.ADD_TO_SELECTED] (state, {pids}) {
+  [types.ADD_TO_SELECTED] (state, {ids}) {
+    if (!(ids instanceof Array) || !ids.length) {
+      return
+    }
     // 数组去重
-    state.selected = [...new Set([...state.selected, ...pids])]
+    state.selected = [...new Set([...state.selected, ...ids])]
   },
-  [types.REMOVE_FROM_SELECTED] (state, {pids}) {
-    for (let pid of pids) {
-      let cartRecordIndex = state.selected.indexOf(pid)
+  [types.REMOVE_FROM_SELECTED] (state, {ids}) {
+    for (let id of ids) {
+      let cartRecordIndex = state.selected.indexOf(id)
       if (~cartRecordIndex) {
         state.selected.splice(cartRecordIndex, 1)
       }
     }
   },
-  [types.CHANGE_QUANTITY] (state, {pid, quantity}) {
-    let cartRecord = state.added.find(p => p.id === pid)
+  [types.CHANGE_QUANTITY] (state, {id, quantity}) {
+    let cartRecord = state.added.find(p => p.id === id)
     if (cartRecord) {
       cartRecord.quantity = quantity
     }
@@ -55,7 +66,9 @@ const mutations = {
   [types.CHECKOUT_REQUEST] (state, {products}) {
     products.forEach((product, index) => {
       let cartRecordIndex = state.added.findIndex(p => p.id === product.id)
-      state.added.splice(cartRecordIndex, 1)
+      if (!cartRecordIndex) {
+        state.added.splice(cartRecordIndex, 1)
+      }
     })
     state.checkoutStatus = CHECKOUT_STATUS_DOING
   },
@@ -82,17 +95,14 @@ const actions = {
       commit(types.CHECKOUT_FAILURE, {savedProducts})
     })
   },
-  changeQuantity: ({commit}, product) => {
-    commit(types.CHANGE_QUANTITY, product)
-  },
-  addToSelected: ({commit}, pids) => {
-    if (pids instanceof Array && pids.length) {
-      commit(types.ADD_TO_SELECTED, {pids})
+  addToSelected: ({commit}, ids) => {
+    if (ids instanceof Array && ids.length) {
+      commit(types.ADD_TO_SELECTED, {ids})
     }
   },
-  removeFromSelect: ({commit}, pids) => {
-    if (pids instanceof Array && pids.length) {
-      commit(types.REMOVE_FROM_SELECTED, {pids})
+  removeFromSelect: ({commit}, ids) => {
+    if (ids instanceof Array && ids.length) {
+      commit(types.REMOVE_FROM_SELECTED, {ids})
     }
   }
 }
