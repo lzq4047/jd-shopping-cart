@@ -85,7 +85,7 @@
               <div class="cart-total__actions pull-left">
                 <input type="checkbox" 
                   id="checkAllBottom" 
-                  :checked="computeChecked(cartProducts) && cartProducts.lenght" 
+                  :checked="computeChecked(cartProducts)" 
                   @change="handleAllChange($event.target.checked)">
                 <label for="checkAllBottom">全选</label>
                 <span @click="removeFromCart(cartSelected)">删除选中的商品</span>
@@ -94,10 +94,15 @@
               </div>
               <div class="cart-total__total pull-right">
                 <p>
-                  <span class="cart-total__overview-toggle">
-                    已选择<span class="cart-total__total-num">{{cartSelected.length}}</span>件商品
-                    <i class="fa fa-angle-up">&nbsp;</i></span>
-                  <span>
+                    <popup direction="right">
+                      <span class="cart-total__overview-toggle" slot="title">
+                        已选择<span class="cart-total__total-num">{{cartSelected.length}}</span>件商品
+                        <i class="fa fa-angle-up">&nbsp;</i></span>
+                      <span>
+                      <div>
+                        content
+                      </div>
+                    </popup>
                     总价：<span class="cart-total__total-price">￥{{totalPrice}}</span>
                     <i class="fa fa-light">&nbsp;</i>
                   </span>
@@ -139,6 +144,7 @@
   import Tab from './common/Tab'
   import TabItem from './common/TabItem'
   import Counter from './common/Counter'
+  import Popup from './common/Popup'
   import ProductsList from './ProductsList'
   import {mapGetters, mapActions} from 'vuex'
   export default {
@@ -217,12 +223,13 @@
       Tab,
       TabItem,
       Counter,
+      Popup,
       ProductsList
     },
     mounted: function () {
       this.$nextTick(() => {
         let timer = null
-        window.onscroll = (event) => {
+        const handleFix = (event) => {
           if (!this.$refs.productsList || !this.$refs.cartTotal) {
             return
           }
@@ -244,6 +251,8 @@
             }, 300)
           }
         }
+        window.onscroll = handleFix
+        window.onresize = handleFix
       })
     }
   }

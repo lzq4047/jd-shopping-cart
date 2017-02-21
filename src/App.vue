@@ -10,14 +10,21 @@
   import Counter from './components/common/Counter'
   import Swiper from './components/common/Swiper'
   import SwiperItem from './components/common/SwiperItem'
+  import Popup from './components/common/Popup'
   export default {
     name: 'app',
+    data: function () {
+      return {
+        show: false
+      }
+    },
     components: {
       Cart,
       Counter,
       ProductsList,
       Swiper,
-      SwiperItem
+      SwiperItem,
+      Popup
     }
   }
 </script>
